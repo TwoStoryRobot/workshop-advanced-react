@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { useQuery } from '@apollo/react-hooks'
+import { gql } from 'apollo-boost'
+import IpInfo from './IpInfo'
+
+const GET_IP_INFO = gql`
+  query getIpInfo {
+    client {
+      ipAddress {
+        address
+        city {
+          name
+          population
+        }
+        country {
+          name
+          population
+          capital {
+            name
+          }
+          currencies {
+            name
+          }
+        }
+      }
+    }
+  }
+`
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const { loading, error, data } = useQuery(GET_IP_INFO)
+
+  if (loading) return 'Loading...'
+  if (error) return 'Error :('
+
+  return <IpInfo ip={data.client.ipAddress} />
 }
 
-export default App;
+export default App
